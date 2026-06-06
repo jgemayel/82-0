@@ -1,9 +1,10 @@
 "use client";
 
 import { RotateCcw } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
+
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export function Header() {
   const reset = () => {
@@ -19,12 +20,12 @@ export function Header() {
             className="cursor-pointer transition-opacity hover:opacity-80"
             aria-label="Restart game"
           >
-            <Image
-              src="/logo.svg"
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`${BASE_PATH}/logo.svg`}
               alt="82-0 Logo"
               width={256}
               height={256}
-              priority
               className="h-28 w-28 sm:h-32 sm:w-32"
             />
           </button>

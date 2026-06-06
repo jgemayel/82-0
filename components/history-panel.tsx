@@ -1,12 +1,19 @@
 "use client";
 
-import { Trophy } from "lucide-react";
+import { ChevronRight, Trophy } from "lucide-react";
+import { MODE_LABELS } from "@/lib/constants";
 import { bestRecord } from "@/lib/history";
 import type { SavedGame } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { Badge, Card } from "./ui";
 
-export function HistoryPanel({ history }: { history: SavedGame[] }) {
+export function HistoryPanel({
+  history,
+  onSelect,
+}: {
+  history: SavedGame[];
+  onSelect?: (game: SavedGame) => void;
+}) {
   if (history.length === 0) return null;
   const best = bestRecord(history);
 
@@ -24,9 +31,16 @@ export function HistoryPanel({ history }: { history: SavedGame[] }) {
       </div>
       <div className="max-h-64 space-y-2 overflow-y-auto thin-scroll pr-1">
         {history.map((g, i) => (
-          <div
+          <button
             key={`${g.date}-${i}`}
-            className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2"
+            onClick={() => onSelect?.(g)}
+            disabled={!onSelect}
+            title={onSelect ? "Load this lineup" : undefined}
+            className={`flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-left transition-all ${
+              onSelect
+                ? "cursor-pointer hover:border-[var(--primary)] hover:bg-[var(--secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                : ""
+            }`}
           >
             <div className="flex items-center gap-2">
               <Badge style={{ backgroundColor: g.color, color: "#fff" }}>
@@ -37,19 +51,19 @@ export function HistoryPanel({ history }: { history: SavedGame[] }) {
                   {g.wins}-{g.losses}
                 </div>
                 <div className="text-[11px] text-[var(--muted-foreground)]">
-                  {g.mode === "hoopiq"
-                    ? "HoopIQ"
-                    : g.mode === "free"
-                      ? "Free Draft"
-                      : "Classic"}{" "}
-                  · {formatDate(g.date)}
+                  {MODE_LABELS[g.mode]} · {formatDate(g.date)}
                 </div>
               </div>
             </div>
-            <div className="text-xs text-[var(--muted-foreground)] tabular-nums">
-              {g.teamOvr}
+            <div className="flex items-center gap-2">
+              <span className="text-xs tabular-nums text-[var(--muted-foreground)]">
+                {g.teamOvr}
+              </span>
+              {onSelect && (
+                <ChevronRight className="h-4 w-4 text-[var(--muted-foreground)]" />
+              )}
             </div>
-          </div>
+          </button>
         ))}
       </div>
     </Card>

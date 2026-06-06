@@ -78,6 +78,20 @@ export function playersFor(
   return index.byTeamDecade.get(key(team, decade)) ?? [];
 }
 
+/** Find the full dataset row for a saved (player, team, era) reference. */
+export function findPlayerRow(
+  index: PlayerIndex,
+  player: string,
+  team: string,
+  era: string,
+): Player | null {
+  return (
+    index.allPlayers.find(
+      (p) => p.player === player && p.team === team && p.era === era,
+    ) ?? null
+  );
+}
+
 /** Teams that field at least one player in the given decade. */
 export function teamsFor(index: PlayerIndex, decade: Decade): string[] {
   return index.teamsByDecade.get(decade) ?? [];

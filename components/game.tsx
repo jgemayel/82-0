@@ -3,7 +3,7 @@
 import { Ban, CalendarX, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ROUNDS } from "@/lib/constants";
-import { buildIndex, type PlayerIndex } from "@/lib/data";
+import { buildIndex, findPlayerRow, type PlayerIndex } from "@/lib/data";
 import { loadHistory, saveGame } from "@/lib/history";
 import {
   emptyCourt,
@@ -58,11 +58,13 @@ export function Game() {
   const [decadeSkipUsed, setDecadeSkipUsed] = useState(false);
   const [result, setResult] = useState<TeamResult | null>(null);
   const [history, setHistory] = useState<SavedGame[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const spinId = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/players_flat.json")
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+    fetch(`${basePath}/players_flat.json`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
@@ -89,6 +91,7 @@ export function Game() {
     setTarget(null);
     setPending(null);
     setPhase("idle");
+    setLoaded(false);
     setStage("playing");
   }, []);
 
@@ -100,7 +103,50 @@ export function Game() {
     setPending(null);
     setPhase("idle");
     setRound(1);
+    setLoaded(false);
   }, []);
+
+  /** Rebuild the saved lineup onto the court and show its result screen. */
+  const loadSaved = useCallback(
+    (g: SavedGame) => {
+      if (!index) return;
+      const c = emptyCourt();
+      for (const r of g.roster) {
+        const row = findPlayerRow(index, r.player, r.team, r.era);
+        c[r.position] = row
+          ? { ...row, slotDecade: row.era as Decade, slotTeam: row.team }
+          : {
+              id: `${r.player}-${r.team}-${r.era}`,
+              player: r.player,
+              team: r.team,
+              pos: r.position,
+              positions: [r.position],
+              ppg: null,
+              rpg: null,
+              apg: null,
+              spg: null,
+              bpg: null,
+              baseSlug: r.player,
+              era: r.era,
+              slotDecade: r.era as Decade,
+              slotTeam: r.team,
+            };
+      }
+      setMode(g.mode);
+      setCourt(c);
+      setResult({
+        teamOvr: g.teamOvr,
+        wins: g.wins,
+        losses: g.losses,
+        grade: g.grade,
+        label: g.label,
+        color: g.color,
+      });
+      setLoaded(true);
+      setStage("results");
+    },
+    [index],
+  );
 
   useEffect(() => {
     (window as unknown as { __resetGame?: () => void }).__resetGame = reset;
@@ -224,7 +270,7 @@ export function Game() {
         <div className="space-y-6">
           <ModeSelect onSelect={startGame} />
           <div className="mx-auto max-w-md">
-            <HistoryPanel history={history} />
+            <HistoryPanel history={history} onSelect={loadSaved} />
           </div>
         </div>
       );
@@ -235,6 +281,7 @@ export function Game() {
           mode={mode}
           result={result}
           court={court}
+          loaded={loaded}
           onPlayAgain={reset}
         />
       );
@@ -385,6 +432,8 @@ export function Game() {
     onSwap,
     onRemove,
     finish,
+    loadSaved,
+    loaded,
   ]);
 
   return content;

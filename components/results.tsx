@@ -21,10 +21,11 @@ interface Props {
   mode: GameMode;
   result: TeamResult;
   court: CourtRoster;
+  loaded?: boolean;
   onPlayAgain: () => void;
 }
 
-export function Results({ mode, result, court, onPlayAgain }: Props) {
+export function Results({ mode, result, court, loaded, onPlayAgain }: Props) {
   const [copied, setCopied] = useState(false);
   const perfect = result.wins === 82;
   const roster = rosterList(court);
@@ -70,7 +71,7 @@ export function Results({ mode, result, court, onPlayAgain }: Props) {
 
   return (
     <div className="mx-auto w-full max-w-xl animate-pop-in space-y-4">
-      {perfect && <Confetti />}
+      {perfect && !loaded && <Confetti />}
 
       <Card className="relative overflow-hidden p-6 text-center">
         <div
@@ -135,7 +136,7 @@ export function Results({ mode, result, court, onPlayAgain }: Props) {
 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
           <Button onClick={onPlayAgain}>
-            <RotateCcw className="h-4 w-4" /> Play again
+            <RotateCcw className="h-4 w-4" /> {loaded ? "Back to menu" : "Play again"}
           </Button>
           <Button variant="outline" onClick={share}>
             {copied ? (
