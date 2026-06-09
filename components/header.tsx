@@ -22,11 +22,11 @@ export function Header() {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={`${BASE_PATH}/logo.svg`}
+              src={`${BASE_PATH}/logo.png`}
               alt="82-0 Logo"
               width={256}
               height={256}
-              className="h-28 w-28 sm:h-32 sm:w-32"
+              className="h-28 w-28 rounded-[22%] shadow-lg sm:h-32 sm:w-32"
             />
           </button>
           <h1 className="text-3xl font-bold text-center">Can you go 82-0?</h1>

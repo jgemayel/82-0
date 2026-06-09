@@ -41,11 +41,23 @@ export function rerollTeam(
   return pickRandom(teams);
 }
 
-/** Re-roll only the decade, keeping a valid team for the new decade. */
+/**
+ * Re-roll only the decade, keeping the SAME franchise whenever that team has
+ * players in another era. Only if the team exists in no other decade does the
+ * franchise change as well.
+ */
 export function rerollDecade(
   index: PlayerIndex,
   currentDecade: Decade,
+  currentTeam: string,
 ): SlotAssignment {
+  const sameTeamDecades = DECADES.filter(
+    (d) => d !== currentDecade && isValid(index, currentTeam, d),
+  );
+  if (sameTeamDecades.length > 0) {
+    return { team: currentTeam, decade: pickRandom(sameTeamDecades) };
+  }
+  // Team has no other era — fall back to a fresh valid combination.
   const others = DECADES.filter((d) => d !== currentDecade);
   for (let attempt = 0; attempt < 200; attempt++) {
     const decade = pickRandom(others);

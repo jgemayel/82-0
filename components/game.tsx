@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, CalendarX, Loader2 } from "lucide-react";
+import { CalendarClock, Loader2, Users } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ROUNDS } from "@/lib/constants";
 import { buildIndex, findPlayerRow, type PlayerIndex } from "@/lib/data";
@@ -185,7 +185,7 @@ export function Game() {
   const skipDecade = useCallback(() => {
     if (!index || !target || decadeSkipUsed || phase !== "picking") return;
     setDecadeSkipUsed(true);
-    const next = rerollDecade(index, target.decade);
+    const next = rerollDecade(index, target.decade, target.team);
     spinId.current += 1;
     setTarget({
       team: next.team,
@@ -368,9 +368,10 @@ export function Game() {
                     className="flex-1"
                     disabled={teamSkipUsed}
                     onClick={skipTeam}
+                    title="Shuffle to a different franchise, same era"
                   >
-                    <Ban className="h-4 w-4" />
-                    Team skip {teamSkipUsed ? "(used)" : "(1)"}
+                    <Users className="h-4 w-4" />
+                    Shuffle team {teamSkipUsed ? "(used)" : "(1)"}
                   </Button>
                   <Button
                     variant="outline"
@@ -378,9 +379,10 @@ export function Game() {
                     className="flex-1"
                     disabled={decadeSkipUsed}
                     onClick={skipDecade}
+                    title="Shuffle to a different era, same franchise"
                   >
-                    <CalendarX className="h-4 w-4" />
-                    Decade skip {decadeSkipUsed ? "(used)" : "(1)"}
+                    <CalendarClock className="h-4 w-4" />
+                    Shuffle decade {decadeSkipUsed ? "(used)" : "(1)"}
                   </Button>
                 </div>
                 <PlayerPick
