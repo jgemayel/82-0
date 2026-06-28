@@ -24,6 +24,13 @@ export const POSITION_NAMES: Record<Position, string> = {
 
 export const ROUNDS = 5;
 
+/**
+ * Feature flag for the Free Draft mode card on the start screen. The mode and
+ * all its code remain fully intact (and saved Free Draft attempts still load);
+ * flip this to `true` to surface the option again.
+ */
+export const ENABLE_FREE_DRAFT = false;
+
 export const MODE_LABELS: Record<GameMode, string> = {
   classic: "Classic",
   hoopiq: "HoopIQ",

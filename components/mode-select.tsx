@@ -1,5 +1,6 @@
 "use client";
 
+import { ENABLE_FREE_DRAFT } from "@/lib/constants";
 import type { GameMode } from "@/lib/types";
 import { Button, Card } from "./ui";
 
@@ -42,14 +43,16 @@ export function ModeSelect({
 }: {
   onSelect: (mode: GameMode) => void;
 }) {
+  const modes = MODES.filter((m) => m.mode !== "free" || ENABLE_FREE_DRAFT);
+  const cols = modes.length >= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2";
   return (
     <div className="mx-auto max-w-3xl">
       <p className="mb-4 text-center text-[var(--muted-foreground)]">
         Build a five-position all-time lineup — PG, SG, SF, PF, C — and simulate
         your 82-game season. Pick a mode to tip off.
       </p>
-      <div className="grid gap-4 sm:grid-cols-3">
-        {MODES.map((m) => (
+      <div className={`grid gap-4 ${cols}`}>
+        {modes.map((m) => (
           <Card key={m.mode} className="flex flex-col p-6 text-center">
             <div className="text-2xl font-bold">
               {m.emoji} {m.name}
