@@ -366,23 +366,23 @@ export function Game() {
                     variant="outline"
                     size="sm"
                     className="flex-1"
-                    disabled={teamSkipUsed}
-                    onClick={skipTeam}
-                    title="Shuffle to a different franchise, same era"
-                  >
-                    <Users className="h-4 w-4" />
-                    Shuffle team {teamSkipUsed ? "(used)" : "(1)"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
                     disabled={decadeSkipUsed}
                     onClick={skipDecade}
                     title="Shuffle to a different era, same franchise"
                   >
                     <CalendarClock className="h-4 w-4" />
                     Shuffle decade {decadeSkipUsed ? "(used)" : "(1)"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    disabled={teamSkipUsed}
+                    onClick={skipTeam}
+                    title="Shuffle to a different franchise, same era"
+                  >
+                    <Users className="h-4 w-4" />
+                    Shuffle team {teamSkipUsed ? "(used)" : "(1)"}
                   </Button>
                 </div>
                 <PlayerPick
